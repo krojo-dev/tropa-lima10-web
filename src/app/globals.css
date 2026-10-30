@@ -1,15 +1,9 @@
 @import "tailwindcss";
 
-:root {
-  --verde: #1b5e20;
-  --verde-oscuro: #0f3d14;
-  --crema: #f7f5ec;
-}
-
-@theme inline {
-  --color-verde: var(--verde);
-  --color-verde-oscuro: var(--verde-oscuro);
-  --color-crema: var(--crema);
+@theme {
+  --color-verde: #1b5e20;
+  --color-verde-oscuro: #0f3d14;
+  --color-crema: #f7f5ec;
 }
 
 html {
@@ -17,6 +11,6 @@ html {
 }
 
 body {
-  background: var(--crema);
+  background-color: #f7f5ec;
   color: #1f2a1f;
 }
