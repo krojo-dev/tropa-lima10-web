@@ -6,6 +6,8 @@ const links = [
   { href: "#que-hacemos", texto: "Qué hacemos" },
   { href: "#patrullas", texto: "Patrullas" },
   { href: "#actividades", texto: "Actividades" },
+  { href: "#tramites", texto: "Trámites" },
+  { href: "#biblioteca", texto: "Biblioteca" },
   { href: "#galeria", texto: "Galería" },
   { href: "#contacto", texto: "Contacto" },
 ];
@@ -22,14 +24,14 @@ export default function Navbar() {
         </a>
 
         <button
-          className="text-2xl md:hidden"
+          className="text-2xl lg:hidden"
           onClick={() => setAbierto(!abierto)}
           aria-label="Abrir menú"
         >
           ☰
         </button>
 
-        <ul className="hidden gap-6 md:flex">
+        <ul className="hidden gap-6 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               <a href={l.href} className="hover:text-yellow-300">{l.texto}</a>
@@ -39,7 +41,7 @@ export default function Navbar() {
       </nav>
 
       {abierto && (
-        <ul className="flex flex-col gap-3 px-4 pb-4 md:hidden">
+        <ul className="flex flex-col gap-3 px-4 pb-4 lg:hidden">
           {links.map((l) => (
             <li key={l.href}>
               <a href={l.href} onClick={() => setAbierto(false)}>{l.texto}</a>

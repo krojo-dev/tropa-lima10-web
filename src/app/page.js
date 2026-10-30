@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 
+/* ========== DATOS ========== */
+
 const queHacemos = [
   { icono: "⛺", titulo: "Campamentos", texto: "Pernoctadas y salidas al aire libre para vivir la naturaleza." },
   { icono: "🤝", titulo: "Servicio", texto: "Aprendemos ayudando a nuestra comunidad." },
@@ -15,14 +17,48 @@ const patrullas = [
 ];
 
 const actividades = [
-  { titulo: "Visita al cementerio", fecha: "Fecha por confirmar", lugar: "Por confirmar" },
-  { titulo: "Pernocta en Lunahuaná", fecha: "Fecha por confirmar", lugar: "Lunahuaná" },
+  { titulo: "Visita al cementerio", fecha: "Fecha por confirmar", lugar: "Por confirmar", formulario: "" },
+  { titulo: "Pernocta en Lunahuaná", fecha: "Fecha por confirmar", lugar: "Lunahuaná", formulario: "" },
 ];
+
+const tramites = [
+  { icono: "📝", titulo: "Inscripción a la tropa", texto: "Para jóvenes de 11 a 14 años que quieran unirse.", enlace: "" },
+  { icono: "🩺", titulo: "Actualizar ficha médica", texto: "Los apoderados deben mantenerla al día.", enlace: "" },
+];
+
+const documentos = [
+  { titulo: "Reglamento de la tropa", descripcion: "Normas y organización.", archivo: "/biblioteca/reglamento-tropa.pdf" },
+  { titulo: "Guía para padres de familia", descripcion: "Todo lo que necesitas saber.", archivo: "/biblioteca/guia-padres.pdf" },
+];
+
+/* ========== FUNCIONES Y COMPONENTES ========== */
 
 function fondoPatrulla(colores) {
   if (colores.length === 1) return colores[0];
   return `linear-gradient(135deg, ${colores[0]} 50%, ${colores[1]} 50%)`;
 }
+
+function BotonFormulario({ enlace, texto }) {
+  if (!enlace) {
+    return (
+      <span className="mt-4 inline-block rounded-full bg-gray-300 px-5 py-2 text-sm font-bold text-gray-600">
+        Próximamente
+      </span>
+    );
+  }
+  return (
+    <a
+      href={enlace}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-4 inline-block rounded-full bg-verde px-5 py-2 text-sm font-bold text-white hover:bg-verde-oscuro"
+    >
+      {texto}
+    </a>
+  );
+}
+
+/* ========== PÁGINA ========== */
 
 export default function Home() {
   return (
@@ -93,15 +129,53 @@ export default function Home() {
                   <h3 className="text-xl font-bold">{a.titulo}</h3>
                   <p className="mt-2 text-sm">📅 {a.fecha}</p>
                   <p className="text-sm">📍 {a.lugar}</p>
-                  <a
-                    href="#"
-                    className="mt-4 inline-block rounded-full bg-verde px-5 py-2 text-sm font-bold text-white hover:bg-verde-oscuro"
-                  >
-                    Inscribirme
-                  </a>
+                  <BotonFormulario enlace={a.formulario} texto="Inscribirme" />
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* TRÁMITES */}
+        <section id="tramites" className="mx-auto max-w-4xl px-4 py-16">
+          <h2 className="mb-8 text-center text-3xl font-bold text-verde">Inscripciones y trámites</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {tramites.map((t) => (
+              <div key={t.titulo} className="rounded-xl bg-white p-6 text-center shadow">
+                <div className="text-5xl">{t.icono}</div>
+                <h3 className="mt-3 text-xl font-bold">{t.titulo}</h3>
+                <p className="mt-2 text-sm">{t.texto}</p>
+                <BotonFormulario enlace={t.enlace} texto="Completar formulario" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* BIBLIOTECA */}
+        <section id="biblioteca" className="bg-white px-4 py-16">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="mb-8 text-center text-3xl font-bold text-verde">Biblioteca</h2>
+            <ul className="space-y-4">
+              {documentos.map((d) => (
+                <li
+                  key={d.archivo}
+                  className="flex items-center justify-between gap-4 rounded-xl bg-crema p-4 shadow"
+                >
+                  <div>
+                    <h3 className="font-bold">📄 {d.titulo}</h3>
+                    <p className="text-sm">{d.descripcion}</p>
+                  </div>
+                  <a
+                    href={d.archivo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 rounded-full bg-verde px-4 py-2 text-sm font-bold text-white hover:bg-verde-oscuro"
+                  >
+                    Ver PDF
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
