@@ -9,7 +9,7 @@ export const categorias = [
 export async function obtenerFilas() {
   try {
     const respuesta = await fetch(process.env.APPS_SCRIPT_URL, {
-      next: { revalidate: 60 },
+      next: { revalidate: 15 },
     });
     const datos = await respuesta.json();
     return datos.filas ?? [];

@@ -9,6 +9,7 @@ import {
   etiquetaSemana,
   etiquetaMes,
 } from "@/lib/puntajes";
+import ActualizarAuto from "@/components/ActualizarAuto";
 
 export default async function Puntajes() {
   const filas = await obtenerFilas();
@@ -49,6 +50,7 @@ export default async function Puntajes() {
   return (
     <>
       <EncabezadoPagina titulo="Puntajes" subtitulo="Haz clic en una patrulla para ver su detalle" />
+      <ActualizarAuto segundos={20} />
 
       <section className="mx-auto max-w-5xl space-y-6 px-4 py-12">
         <div className="mx-auto max-w-3xl">

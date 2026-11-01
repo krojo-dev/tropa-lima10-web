@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import EncabezadoPagina from "@/components/EncabezadoPagina";
-import FormularioPuntajes from "@/components/FormularioPuntajes";
+import PanelCarga from "@/components/PanelCarga";
 import { auth, signIn, signOut, esDirigente } from "@/auth";
 
 export const metadata = {
@@ -48,7 +48,7 @@ async function ContenidoPanel() {
           </button>
         </form>
       </div>
-      <FormularioPuntajes />
+      <PanelCarga />
     </section>
   );
 }
