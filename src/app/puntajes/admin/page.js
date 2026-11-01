@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import EncabezadoPagina from "@/components/EncabezadoPagina";
+import FormularioPuntajes from "@/components/FormularioPuntajes";
 import { auth, signIn, signOut, esDirigente } from "@/auth";
 
 export const metadata = {
@@ -33,19 +34,21 @@ async function ContenidoPanel() {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-16 text-center">
-      <p className="mb-2 text-lg font-bold">Hola, {sesion.user.name}</p>
-      <p className="mb-6">✅ Sesión iniciada. Aquí irá el formulario para registrar puntajes.</p>
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/puntajes" });
-        }}
-      >
-        <button type="submit" className="rounded-full border-2 border-verde px-6 py-2 font-bold text-verde">
-          Cerrar sesión
-        </button>
-      </form>
+    <section className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <p className="font-bold">Hola, {sesion.user.name}</p>
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/puntajes" });
+          }}
+        >
+          <button type="submit" className="rounded-full border-2 border-verde px-4 py-1 text-sm font-bold text-verde">
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+      <FormularioPuntajes />
     </section>
   );
 }
@@ -53,7 +56,7 @@ async function ContenidoPanel() {
 export default function PanelDirigentes() {
   return (
     <>
-      <EncabezadoPagina titulo="Panel de dirigentes" subtitulo="Acceso solo para dirigentes" />
+      <EncabezadoPagina titulo="Panel de dirigentes" subtitulo="Registrar puntajes de la reunión" />
       <Suspense fallback={<p className="px-4 py-16 text-center">Cargando...</p>}>
         <ContenidoPanel />
       </Suspense>
