@@ -6,10 +6,10 @@ export const queHacemos = [
 ];
 
 export const patrullas = [
-  { nombre: "Águilas", colores: ["#1b5e20", "#111111"] },
-  { nombre: "Lobos", colores: ["#facc15", "#111111"] },
-  { nombre: "Panteras", colores: ["#facc15"] },
-  { nombre: "Rinocerontes", colores: ["#14213d", "#f97316"] },
+  { nombre: "Águilas", colores: ["#1b5e20", "#111111"], lema: "Lema por definir", grito: "Grito por definir", logo: "" },
+  { nombre: "Lobos", colores: ["#facc15", "#111111"], lema: "Lema por definir", grito: "Grito por definir", logo: "" },
+  { nombre: "Panteras", colores: ["#facc15"], lema: "Lema por definir", grito: "Grito por definir", logo: "" },
+  { nombre: "Rinocerontes", colores: ["#14213d", "#f97316"], lema: "Lema por definir", grito: "Grito por definir", logo: "" },
 ];
 
 export const actividades = [

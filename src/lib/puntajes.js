@@ -67,3 +67,37 @@ export function etiquetaMes(clave) {
   const d = new Date(clave + "-01T00:00:00Z");
   return new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }
+
+export function puntosPorCategoria(filas, patrulla) {
+  const resultado = {};
+  categorias.forEach((c) => {
+    resultado[c] = 0;
+  });
+  filas.forEach((f) => {
+    if (f.patrulla === patrulla && f.categoria in resultado) {
+      resultado[f.categoria] += f.puntos;
+    }
+  });
+  return resultado;
+}
+
+export function posicion(ranking, patrulla) {
+  return ranking.findIndex((r) => r.patrulla === patrulla) + 1;
+}
+
+export function puntosDe(ranking, patrulla) {
+  return ranking.find((r) => r.patrulla === patrulla)?.puntos ?? 0;
+}
+
+export function evolucionSemanal(filas, patrulla, nombresPatrullas, cantidad = 8) {
+  const semanas = [...new Set(filas.map((f) => inicioSemana(f.fecha)))].sort().slice(-cantidad);
+  return semanas.map((semana) => {
+    const delaSemana = filas.filter((f) => inicioSemana(f.fecha) === semana);
+    const ranking = calcularRanking(delaSemana, nombresPatrullas);
+    return {
+      semana,
+      puntos: puntosDe(ranking, patrulla),
+      gano: ranking[0]?.patrulla === patrulla && ranking[0].puntos > 0,
+    };
+  });
+}
