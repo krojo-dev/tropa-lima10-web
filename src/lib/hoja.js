@@ -1,16 +1,7 @@
-import { google } from "googleapis";
 import { randomUUID } from "node:crypto";
+import { clienteSheets } from "@/lib/google";
 
 const PESTANA = "Puntajes";
-
-function clienteSheets() {
-  const credenciales = new google.auth.JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: (process.env.GOOGLE_PRIVATE_KEY ?? "").replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-  return google.sheets({ version: "v4", auth: credenciales });
-}
 
 function serialAFecha(serial) {
   const milisegundos = Date.UTC(1899, 11, 30) + Math.round(serial) * 86400000;

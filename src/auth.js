@@ -17,3 +17,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+export async function correoDirigente() {
+  const sesion = await auth();
+  const correo = sesion?.user?.email;
+  return correo && esDirigente(correo) ? correo : null;
+}

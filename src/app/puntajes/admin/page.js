@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import EncabezadoPagina from "@/components/EncabezadoPagina";
 import PanelCarga from "@/components/PanelCarga";
 import { auth, signIn, signOut, esDirigente } from "@/auth";
+import { patrullaDelDirigente } from "@/lib/registro";
 
 export const metadata = {
   title: "Panel de dirigentes | Tropa Trinitarios",
@@ -33,22 +34,30 @@ async function ContenidoPanel() {
     );
   }
 
+  const miPatrulla = await patrullaDelDirigente(sesion.user.email);
+
   return (
     <section className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between gap-4">
-        <p className="font-bold">Hola, {sesion.user.name}</p>
+        <p className="font-bold">
+          Hola, {sesion.user.name}
+          {miPatrulla && ` · Patrulla ${miPatrulla}`}
+        </p>
         <form
           action={async () => {
             "use server";
             await signOut({ redirectTo: "/puntajes" });
           }}
         >
-          <button type="submit" className="rounded-full border-2 border-verde px-4 py-1 text-sm font-bold text-verde">
+          <button
+            type="submit"
+            className="rounded-full border-2 border-verde px-4 py-1 text-sm font-bold text-verde"
+          >
             Cerrar sesión
           </button>
         </form>
       </div>
-      <PanelCarga />
+      <PanelCarga miPatrulla={miPatrulla} />
     </section>
   );
 }
@@ -56,7 +65,7 @@ async function ContenidoPanel() {
 export default function PanelDirigentes() {
   return (
     <>
-      <EncabezadoPagina titulo="Panel de dirigentes" subtitulo="Registrar puntajes de la reunión" />
+      <EncabezadoPagina titulo="Panel de dirigentes" subtitulo="Gestión de la tropa" />
       <Suspense fallback={<p className="px-4 py-16 text-center">Cargando...</p>}>
         <ContenidoPanel />
       </Suspense>

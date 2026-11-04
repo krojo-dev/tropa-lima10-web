@@ -31,3 +31,20 @@ export function fondoPatrulla(colores) {
   if (colores.length === 1) return colores[0];
   return `linear-gradient(135deg, ${colores[0]} 50%, ${colores[1]} 50%)`;
 }
+
+export const roles = [
+  "Guía",
+  "Subguía",
+  "Secretario",
+  "Tesorero",
+  "Intendente",
+  "Enfermero",
+  "Cocinero",
+  "Aguatero",
+  "Fogonero",
+  "Constructor",
+  "Bibliotecario",
+  "Mensajero",
+  "Animador",
+  "Guardián de leyenda",
+];

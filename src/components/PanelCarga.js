@@ -1,48 +1,48 @@
 "use client";
 import { useState } from "react";
-import FormularioRegistro from "./FormularioRegistro";
-import HistorialRegistros from "./HistorialRegistros";
+import SeccionPuntajes from "./SeccionPuntajes";
+import SeccionIntegrantes from "./SeccionIntegrantes";
 
-export default function PanelCarga() {
-  const [pestana, setPestana] = useState("registrar");
-  const [editando, setEditando] = useState(null);
+const secciones = [
+  { id: "puntajes", texto: "🏆 Puntajes" },
+  { id: "asistencia", texto: "✅ Asistencia" },
+  { id: "integrantes", texto: "👥 Integrantes" },
+  { id: "resumen", texto: "📊 Resumen" },
+];
 
-  function clasePestana(nombre) {
-    return `flex-1 rounded-full py-2 font-bold ${
-      pestana === nombre ? "bg-verde text-white" : "border-2 border-verde text-verde"
-    }`;
-  }
+function Proximamente({ titulo }) {
+  return (
+    <div className="rounded-xl bg-white p-10 text-center shadow">
+      <p className="text-xl font-bold text-verde">{titulo}</p>
+      <p className="mt-2 text-gray-600">Próximamente.</p>
+    </div>
+  );
+}
 
-  if (editando) {
-    return (
-      <FormularioRegistro
-        key={editando.lote}
-        registroInicial={editando}
-        onGuardado={() => {
-          setEditando(null);
-          setPestana("historial");
-        }}
-        onCancelar={() => setEditando(null)}
-      />
-    );
-  }
+export default function PanelCarga({ miPatrulla = "" }) {
+  const [seccion, setSeccion] = useState("puntajes");
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-3">
-        <button type="button" onClick={() => setPestana("registrar")} className={clasePestana("registrar")}>
-          ➕ Registrar
-        </button>
-        <button type="button" onClick={() => setPestana("historial")} className={clasePestana("historial")}>
-          📋 Historial
-        </button>
-      </div>
+      <nav className="flex gap-2 overflow-x-auto border-b pb-2">
+        {secciones.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setSeccion(s.id)}
+            className={`shrink-0 rounded-t-lg px-4 py-2 font-bold ${
+              seccion === s.id ? "border-b-4 border-verde text-verde" : "text-gray-500"
+            }`}
+          >
+            {s.texto}
+          </button>
+        ))}
+      </nav>
 
-      {pestana === "registrar" ? (
-        <FormularioRegistro />
-      ) : (
-        <HistorialRegistros onEditar={setEditando} />
-      )}
+      {seccion === "puntajes" && <SeccionPuntajes />}
+      {seccion === "asistencia" && <Proximamente titulo="Asistencia" />}
+      {seccion === "integrantes" && <SeccionIntegrantes miPatrulla={miPatrulla} />}
+      {seccion === "resumen" && <Proximamente titulo="Resumen para dirigentes" />}
     </div>
   );
 }
