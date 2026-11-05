@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import SeccionPuntajes from "./SeccionPuntajes";
+import SeccionAsistencia from "./SeccionAsistencia";
 import SeccionIntegrantes from "./SeccionIntegrantes";
 
 const secciones = [
@@ -40,7 +41,7 @@ export default function PanelCarga({ miPatrulla = "" }) {
       </nav>
 
       {seccion === "puntajes" && <SeccionPuntajes />}
-      {seccion === "asistencia" && <Proximamente titulo="Asistencia" />}
+      {seccion === "asistencia" && <SeccionAsistencia miPatrulla={miPatrulla} />}
       {seccion === "integrantes" && <SeccionIntegrantes miPatrulla={miPatrulla} />}
       {seccion === "resumen" && <Proximamente titulo="Resumen para dirigentes" />}
     </div>

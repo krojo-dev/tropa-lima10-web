@@ -50,3 +50,5 @@ export const roles = [
 ];
 
 export const maxIntegrantesPorPatrulla = 8;
+
+export const estadosAsistencia = ["Asistió", "Tardanza", "Falta", "Falta justificada"];
