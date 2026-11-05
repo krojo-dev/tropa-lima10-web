@@ -1,4 +1,5 @@
 import { clienteSheets } from "@/lib/google";
+import { maxIntegrantesPorPatrulla } from "@/data/datos";
 
 const HOJA_INTEGRANTES = "Integrantes";
 const HOJA_DIRIGENTES = "Dirigentes";
@@ -39,6 +40,25 @@ function aFila(d) {
   return [d.codigo, d.nombres, d.apellidos, d.patrulla, d.rol, d.activo ? "Sí" : "No", d.ingreso];
 }
 
+function comprobarCupo(existentes, datos, actual) {
+  if (!datos.activo) return null;
+
+  const yaOcupaCupo = actual?.activo && actual.patrulla === datos.patrulla;
+  if (yaOcupaCupo) return null;
+
+  const ocupados = existentes.filter(
+    (x) =>
+      x.activo &&
+      x.patrulla === datos.patrulla &&
+      x.codigo.toLowerCase() !== datos.codigo.toLowerCase()
+  ).length;
+
+  if (ocupados >= maxIntegrantesPorPatrulla) {
+    return `${datos.patrulla} ya tiene ${maxIntegrantesPorPatrulla} integrantes activos (el máximo). Da de baja o cambia de patrulla a alguien primero.`;
+  }
+  return null;
+}
+
 function comprobarRoles(existentes, datos) {
   const rolUnico = datos.rol === "Guía" || datos.rol === "Subguía";
   if (!rolUnico || !datos.activo) return null;
@@ -67,7 +87,11 @@ export async function crearIntegrante(datos) {
   if (existentes.some((x) => x.codigo.toLowerCase() === datos.codigo.toLowerCase())) {
     return { ok: false, error: "Ya existe un integrante con ese código de registro." };
   }
-  const errorRol = comprobarRoles(existentes, { ...datos, activo: true });
+
+  const nuevo = { ...datos, activo: true };
+  const errorCupo = comprobarCupo(existentes, nuevo, null);
+  if (errorCupo) return { ok: false, error: errorCupo };
+  const errorRol = comprobarRoles(existentes, nuevo);
   if (errorRol) return { ok: false, error: errorRol };
 
   await sheets.spreadsheets.values.append({
@@ -75,7 +99,7 @@ export async function crearIntegrante(datos) {
     range: `${HOJA_INTEGRANTES}!A:G`,
     valueInputOption: "RAW",
     insertDataOption: "INSERT_ROWS",
-    requestBody: { values: [aFila({ ...datos, activo: true })] },
+    requestBody: { values: [aFila(nuevo)] },
   });
   return { ok: true };
 }
@@ -87,6 +111,8 @@ export async function actualizarIntegrante(datos) {
   const actual = existentes.find((x) => x.codigo.toLowerCase() === datos.codigo.toLowerCase());
   if (!actual) return { ok: false, error: "Ese integrante ya no existe." };
 
+  const errorCupo = comprobarCupo(existentes, datos, actual);
+  if (errorCupo) return { ok: false, error: errorCupo };
   const errorRol = comprobarRoles(existentes, datos);
   if (errorRol) return { ok: false, error: errorRol };
 

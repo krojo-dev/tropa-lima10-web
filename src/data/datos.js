@@ -48,3 +48,5 @@ export const roles = [
   "Animador",
   "Guardián de leyenda",
 ];
+
+export const maxIntegrantesPorPatrulla = 8;

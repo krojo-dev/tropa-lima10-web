@@ -5,7 +5,7 @@ import {
   guardarIntegrante,
   modificarIntegrante,
 } from "@/app/puntajes/admin/acciones-integrantes";
-import { patrullas, roles } from "@/data/datos";
+import { patrullas, roles, maxIntegrantesPorPatrulla } from "@/data/datos";
 
 const campo = "w-full rounded-lg border border-gray-300 px-3 py-2";
 
@@ -13,7 +13,13 @@ function hoyEnLima() {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/Lima" });
 }
 
-function FormularioIntegrante({ inicial, patrullaInicial, onCancelar, onGuardado }) {
+function claseCupo(cantidad) {
+  if (cantidad > maxIntegrantesPorPatrulla) return "bg-red-100 text-red-800";
+  if (cantidad === maxIntegrantesPorPatrulla) return "bg-yellow-100 text-yellow-900";
+  return "bg-green-100 text-green-800";
+}
+
+function FormularioIntegrante({ inicial, patrullaInicial, ocupacion, onCancelar, onGuardado }) {
   const editando = Boolean(inicial);
   const [datos, setDatos] = useState(
     inicial ?? {
@@ -75,9 +81,15 @@ function FormularioIntegrante({ inicial, patrullaInicial, onCancelar, onGuardado
         <label className="block">
           <span className="mb-1 block font-bold">Patrulla</span>
           <select value={datos.patrulla} onChange={(e) => cambiar("patrulla", e.target.value)} className={campo}>
-            {patrullas.map((p) => (
-              <option key={p.nombre} value={p.nombre}>{p.nombre}</option>
-            ))}
+            {patrullas.map((p) => {
+              const llena =
+                ocupacion[p.nombre] >= maxIntegrantesPorPatrulla && p.nombre !== inicial?.patrulla;
+              return (
+                <option key={p.nombre} value={p.nombre} disabled={llena}>
+                  {p.nombre} ({ocupacion[p.nombre]}/{maxIntegrantesPorPatrulla}){llena ? " · llena" : ""}
+                </option>
+              );
+            })}
           </select>
         </label>
         <label className="block">
@@ -163,6 +175,7 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
   }, [recarga]);
 
   async function cambiarEstado(integrante, activo) {
+    setError("");
     const resultado = await modificarIntegrante({ ...integrante, activo });
     if (!resultado.ok) {
       setError(resultado.error);
@@ -171,12 +184,28 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
     setRecarga((n) => n + 1);
   }
 
+  const activos = integrantes.filter((i) => i.activo);
+
+  const ocupacion = {};
+  patrullas.forEach((p) => {
+    ocupacion[p.nombre] = activos.filter((i) => i.patrulla === p.nombre).length;
+  });
+
   if (formulario) {
+    const primeraConCupo =
+      patrullas.find((p) => ocupacion[p.nombre] < maxIntegrantesPorPatrulla)?.nombre ??
+      patrullas[0].nombre;
+    const patrullaInicial =
+      filtroPatrulla !== "Todas" && ocupacion[filtroPatrulla] < maxIntegrantesPorPatrulla
+        ? filtroPatrulla
+        : primeraConCupo;
+
     return (
       <FormularioIntegrante
         key={formulario.codigo ?? "nuevo"}
         inicial={formulario.datos}
-        patrullaInicial={filtroPatrulla !== "Todas" ? filtroPatrulla : patrullas[0].nombre}
+        patrullaInicial={patrullaInicial}
+        ocupacion={ocupacion}
         onCancelar={() => setFormulario(null)}
         onGuardado={() => {
           setFormulario(null);
@@ -186,7 +215,6 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
     );
   }
 
-  const activos = integrantes.filter((i) => i.activo);
   const faltantes = patrullas
     .map((p) => ({
       patrulla: p.nombre,
@@ -195,6 +223,8 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
       ),
     }))
     .filter((f) => f.faltan.length > 0);
+
+  const sobrecupo = patrullas.filter((p) => ocupacion[p.nombre] > maxIntegrantesPorPatrulla);
 
   const textoBuscado = buscar.trim().toLowerCase();
   const visibles = integrantes
@@ -249,8 +279,14 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
         </button>
       </div>
 
-      {faltantes.length > 0 && !cargando && (
-        <div className="rounded-xl bg-yellow-100 p-4 text-sm text-yellow-900">
+      {(faltantes.length > 0 || sobrecupo.length > 0) && !cargando && (
+        <div className="space-y-1 rounded-xl bg-yellow-100 p-4 text-sm text-yellow-900">
+          {sobrecupo.map((p) => (
+            <p key={`sobre-${p.nombre}`}>
+              🚫 <b>{p.nombre}</b> tiene {ocupacion[p.nombre]} integrantes activos y el máximo es{" "}
+              {maxIntegrantesPorPatrulla}.
+            </p>
+          ))}
           {faltantes.map((f) => (
             <p key={f.patrulla}>
               ⚠️ <b>{f.patrulla}</b>: falta asignar {f.faltan.join(" y ")}.
@@ -264,7 +300,7 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
 
       {!cargando && !error && (
         <p className="text-sm text-gray-600">
-          {visibles.length} integrante(s) · {activos.length} activos en total
+          {visibles.length} integrante(s) en la lista · {activos.length} activos en total
         </p>
       )}
 
@@ -281,7 +317,12 @@ export default function SeccionIntegrantes({ miPatrulla = "" }) {
 
           return (
             <div key={p.nombre} className="rounded-xl bg-white p-4 shadow">
-              <h3 className="mb-3 text-lg font-bold text-verde">{p.nombre}</h3>
+              <h3 className="mb-3 flex items-center justify-between text-lg font-bold text-verde">
+                <span>{p.nombre}</span>
+                <span className={`rounded-full px-3 py-1 text-sm ${claseCupo(ocupacion[p.nombre])}`}>
+                  {ocupacion[p.nombre]}/{maxIntegrantesPorPatrulla}
+                </span>
+              </h3>
               <ul className="divide-y">
                 {deLaPatrulla.map((i) => (
                   <li key={i.codigo} className="flex flex-wrap items-center justify-between gap-2 py-2">
