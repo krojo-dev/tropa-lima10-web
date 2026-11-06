@@ -2,7 +2,11 @@
 
 import { correoDirigente } from "@/auth";
 import { estadosAsistencia } from "@/data/datos";
-import { leerAsistenciaDelDia, guardarMarcas } from "@/lib/asistencia";
+import {
+  leerAsistenciaDelDia,
+  guardarMarcas,
+  resumenDirigentesCacheado,
+} from "@/lib/asistencia";
 
 function fechaValida(fecha) {
   return /^\d{4}-\d{2}-\d{2}$/.test(fecha ?? "");
@@ -42,5 +46,16 @@ export async function guardarAsistencia({ fecha, marcas }) {
   } catch (error) {
     console.error("Error al guardar asistencia", error);
     return { ok: false, error: "No se pudo guardar. Intenta de nuevo." };
+  }
+}
+
+export async function obtenerResumenDirigentes() {
+  if (!(await correoDirigente())) return { ok: false, error: "No tienes permiso." };
+  try {
+    const hoy = new Date().toLocaleDateString("en-CA", { timeZone: "America/Lima" });
+    return { ok: true, resumen: await resumenDirigentesCacheado(hoy) };
+  } catch (error) {
+    console.error("Error al calcular el resumen", error);
+    return { ok: false, error: "No se pudo cargar el resumen." };
   }
 }

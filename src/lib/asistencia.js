@@ -1,5 +1,8 @@
+import { cacheLife } from "next/cache";
 import { clienteSheets } from "@/lib/google";
 import { listarIntegrantes } from "@/lib/registro";
+import { patrullas } from "@/data/datos";
+import { calcularResumenDirigentes } from "@/lib/estadisticasAsistencia";
 
 const HOJA = "Asistencia";
 
@@ -27,6 +30,7 @@ async function leerFilas(sheets) {
       fila: i + 2,
       fecha: typeof f[0] === "number" ? serialAFecha(f[0]) : texto(f[0]),
       codigo: texto(f[1]),
+      patrulla: texto(f[3]),
       estado: texto(f[5]),
       registradoPor: texto(f[6]),
       hora: texto(f[7]),
@@ -113,4 +117,33 @@ export async function guardarMarcas({ fecha, marcas, correo }) {
   }
 
   return { nuevas: nuevas.length, actualizadas: actualizaciones.length, omitidas };
+}
+
+export async function leerAsistenciaPublica() {
+  "use cache";
+  cacheLife({ stale: 30, revalidate: 20, expire: 3600 });
+
+  try {
+    const filas = await leerFilas(clienteSheets());
+    return filas.map((f) => ({ fecha: f.fecha, patrulla: f.patrulla, estado: f.estado }));
+  } catch (error) {
+    console.error("No se pudo leer la asistencia pública", error);
+    return [];
+  }
+}
+
+export async function resumenDirigentesCacheado(hoy) {
+  "use cache";
+  cacheLife({ stale: 30, revalidate: 10, expire: 600 });
+
+  const [filas, integrantes] = await Promise.all([
+    leerFilas(clienteSheets()),
+    listarIntegrantes(),
+  ]);
+  return calcularResumenDirigentes({
+    filas,
+    integrantes,
+    hoy,
+    nombresPatrullas: patrullas.map((p) => p.nombre),
+  });
 }

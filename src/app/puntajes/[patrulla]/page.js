@@ -1,7 +1,15 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import ActualizarAuto from "@/components/ActualizarAuto";
-import { TarjetaResumen, FilaCategoria, GraficoSemanal, TablaPuntajes } from "@/components/dashboard";
+import {
+  TarjetaResumen,
+  FilaCategoria,
+  GraficoSemanal,
+  TablaPuntajes,
+  TarjetaPorcentaje,
+  GraficoPorcentajes,
+} from "@/components/dashboard";
 import { patrullas, fondoPatrulla } from "@/data/datos";
 import {
   categorias,
@@ -16,8 +24,8 @@ import {
   puntosDe,
   evolucionSemanal,
 } from "@/lib/puntajes";
-import { Suspense } from "react";
-
+import { leerAsistenciaPublica } from "@/lib/asistencia";
+import { tableroAsistenciaPatrulla } from "@/lib/estadisticasAsistencia";
 
 export function generateStaticParams() {
   return patrullas.map((p) => ({ patrulla: slug(p.nombre) }));
@@ -91,10 +99,11 @@ async function ContenidoPatrulla({ params }) {
   const patrulla = patrullas.find((p) => slug(p.nombre) === parametro);
   if (!patrulla) notFound();
 
-  const filas = await obtenerFilas();
+  const [filas, asistenciaPublica] = await Promise.all([obtenerFilas(), leerAsistenciaPublica()]);
   const nombres = patrullas.map((p) => p.nombre);
   const color = patrulla.colores[0];
   const tablero = filas.length > 0 ? calcularTablero(filas, patrulla.nombre, nombres) : null;
+  const asistencia = tableroAsistenciaPatrulla(asistenciaPublica, patrulla.nombre);
 
   return (
     <>
@@ -155,14 +164,51 @@ async function ContenidoPatrulla({ params }) {
                 <GraficoSemanal semanas={tablero.semanas} color={color} />
               </div>
             </div>
+          </>
+        )}
 
-            <div className="rounded-xl bg-white p-6 shadow">
-              <h2 className="text-xl font-bold text-verde">✅ Asistencia</h2>
-              <p className="mt-2 text-sm text-gray-600">
-                Próximamente: aquí verás el porcentaje de asistencia de la patrulla a las reuniones.
+        {/* ASISTENCIA */}
+        <div className="space-y-4 rounded-xl bg-white p-6 shadow">
+          <h2 className="text-xl font-bold text-verde">✅ Asistencia</h2>
+          {!asistencia ? (
+            <p className="text-sm text-gray-600">
+              Aún no hay asistencias registradas para esta patrulla.
+            </p>
+          ) : (
+            <>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <TarjetaPorcentaje
+                  titulo="Semana"
+                  subtitulo={asistencia.etiquetas.semana}
+                  resumen={asistencia.semana}
+                />
+                <TarjetaPorcentaje
+                  titulo="Mes"
+                  subtitulo={asistencia.etiquetas.mes}
+                  resumen={asistencia.mes}
+                />
+                <TarjetaPorcentaje
+                  titulo="Año"
+                  subtitulo={asistencia.etiquetas.anio}
+                  resumen={asistencia.anio}
+                />
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-bold">Asistencia por reunión</h3>
+                <GraficoPorcentajes datos={asistencia.porReunion} color={color} />
+              </div>
+
+              <p className="text-xs text-gray-500">
+                El porcentaje suma asistencias y tardanzas sobre el total de registros de la patrulla.
+                Las faltas, justificadas o no, bajan el porcentaje.
               </p>
-            </div>
+            </>
+          )}
+        </div>
 
+        {tablero && (
+          <>
             <div className="rounded-xl bg-white p-6 shadow">
               <h2 className="mb-2 text-xl font-bold text-verde">🎮 Puntaje por juego</h2>
               <TablaPuntajes filas={tablero.juegos} textoVacio="Aún no hay juegos registrados." />

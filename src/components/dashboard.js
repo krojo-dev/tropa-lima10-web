@@ -97,3 +97,45 @@ export function TablaPuntajes({ filas, mostrarCategoria = false, textoVacio }) {
     </div>
   );
 }
+
+export function TarjetaPorcentaje({ titulo, subtitulo, resumen }) {
+  const porcentaje = resumen.porcentaje;
+  return (
+    <div className="rounded-xl border p-4 text-center">
+      <p className="text-sm font-bold uppercase text-gray-500">{titulo}</p>
+      <p className="text-xs capitalize text-gray-500">{subtitulo}</p>
+      <p
+        className={`my-2 text-4xl font-extrabold ${
+          porcentaje === null ? "text-gray-400" : "text-verde"
+        }`}
+      >
+        {porcentaje === null ? "—" : `${porcentaje}%`}
+      </p>
+      <p className="text-xs text-gray-600">
+        ✅ {resumen.asistio} · ⏰ {resumen.tardanza} · ❌ {resumen.falta} · 📄 {resumen.justificada}
+      </p>
+      {resumen.porcentajeJustificacion !== null && (
+        <p className="mt-1 text-xs text-gray-500">
+          Faltas avisadas: {resumen.porcentajeJustificacion}%
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function GraficoPorcentajes({ datos, color }) {
+  return (
+    <div className="flex h-44 items-end gap-2">
+      {datos.map((d) => (
+        <div key={d.fecha} className="flex h-full flex-1 flex-col items-center justify-end">
+          <span className="text-xs font-bold">{d.porcentaje}%</span>
+          <div
+            className="w-full rounded-t-md"
+            style={{ height: `${Math.max(d.porcentaje, 3)}%`, background: color }}
+          />
+          <span className="mt-1 text-[10px] text-gray-500">{d.etiqueta}</span>
+        </div>
+      ))}
+    </div>
+  );
+}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import SeccionPuntajes from "./SeccionPuntajes";
 import SeccionAsistencia from "./SeccionAsistencia";
 import SeccionIntegrantes from "./SeccionIntegrantes";
+import SeccionResumen from "./SeccionResumen";
 
 const secciones = [
   { id: "puntajes", texto: "🏆 Puntajes" },
@@ -10,15 +11,6 @@ const secciones = [
   { id: "integrantes", texto: "👥 Integrantes" },
   { id: "resumen", texto: "📊 Resumen" },
 ];
-
-function Proximamente({ titulo }) {
-  return (
-    <div className="rounded-xl bg-white p-10 text-center shadow">
-      <p className="text-xl font-bold text-verde">{titulo}</p>
-      <p className="mt-2 text-gray-600">Próximamente.</p>
-    </div>
-  );
-}
 
 export default function PanelCarga({ miPatrulla = "" }) {
   const [seccion, setSeccion] = useState("puntajes");
@@ -43,7 +35,7 @@ export default function PanelCarga({ miPatrulla = "" }) {
       {seccion === "puntajes" && <SeccionPuntajes />}
       {seccion === "asistencia" && <SeccionAsistencia miPatrulla={miPatrulla} />}
       {seccion === "integrantes" && <SeccionIntegrantes miPatrulla={miPatrulla} />}
-      {seccion === "resumen" && <Proximamente titulo="Resumen para dirigentes" />}
+      {seccion === "resumen" && <SeccionResumen />}
     </div>
   );
 }
