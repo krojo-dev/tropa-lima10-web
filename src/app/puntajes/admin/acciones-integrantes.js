@@ -3,6 +3,7 @@
 import { correoDirigente } from "@/auth";
 import { patrullas, roles } from "@/data/datos";
 import { listarIntegrantes, crearIntegrante, actualizarIntegrante } from "@/lib/registro";
+import { updateTag } from "next/cache";
 
 function limpiar(valor, maximo = 60) {
   return String(valor ?? "").trim().replace(/^[=+\-@]+/, "").slice(0, maximo);
@@ -44,7 +45,9 @@ export async function guardarIntegrante(datos) {
   const validado = validar(datos);
   if (validado.error) return { ok: false, error: validado.error };
   try {
-    return await crearIntegrante(validado.datos);
+    const resultado = await crearIntegrante(validado.datos);
+    if (resultado.ok) updateTag("asistencia");
+    return resultado;
   } catch (error) {
     console.error("Error al crear integrante", error);
     return { ok: false, error: "No se pudo guardar. Intenta de nuevo." };
@@ -56,7 +59,9 @@ export async function modificarIntegrante(datos) {
   const validado = validar(datos);
   if (validado.error) return { ok: false, error: validado.error };
   try {
-    return await actualizarIntegrante(validado.datos);
+    const resultado = await actualizarIntegrante(validado.datos);
+    if (resultado.ok) updateTag("asistencia");
+    return resultado;
   } catch (error) {
     console.error("Error al editar integrante", error);
     return { ok: false, error: "No se pudo guardar. Intenta de nuevo." };

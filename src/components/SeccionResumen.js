@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { obtenerResumenDirigentes } from "@/app/puntajes/admin/acciones-asistencia";
+import {
+  obtenerResumenDirigentes,
+  refrescarDatos,
+} from "@/app/puntajes/admin/acciones-asistencia";
 
 function pct(r) {
   return r.porcentaje === null ? "—" : `${r.porcentaje}%`;
@@ -29,6 +32,7 @@ export default function SeccionResumen() {
   const [resumen, setResumen] = useState(null);
   const [error, setError] = useState("");
   const [actualizado, setActualizado] = useState("");
+  const [refrescando, setRefrescando] = useState(false);  
 
   const cargar = useCallback(async () => {
     const resultado = await obtenerResumenDirigentes();
@@ -47,6 +51,13 @@ export default function SeccionResumen() {
       })
     );
   }, []);
+
+    async function refrescarAhora() {
+    setRefrescando(true);
+    await refrescarDatos();
+    await cargar();
+    setRefrescando(false);
+  }
 
   useEffect(() => {
     cargar();
@@ -79,7 +90,17 @@ export default function SeccionResumen() {
           <h2 className="text-xl font-bold text-verde">
             {resumen.esHoy ? "Reunión de hoy" : "Última reunión registrada"} · {resumen.fechaRef}
           </h2>
-          <span className="text-xs text-gray-500">🔴 En vivo · actualizado {actualizado}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">🔴 En vivo · actualizado {actualizado}</span>
+            <button
+              type="button"
+              onClick={refrescarAhora}
+              disabled={refrescando}
+              className="rounded-full border-2 border-verde px-3 py-1 text-xs font-bold text-verde disabled:opacity-50"
+            >
+              {refrescando ? "Actualizando..." : "↻ Actualizar datos ahora"}
+            </button>
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-4">

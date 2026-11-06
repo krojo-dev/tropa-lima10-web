@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath, updateTag } from "next/cache";
 import { correoDirigente } from "@/auth";
 import { estadosAsistencia } from "@/data/datos";
 import {
@@ -42,6 +43,8 @@ export async function guardarAsistencia({ fecha, marcas }) {
 
   try {
     const resultado = await guardarMarcas({ fecha, marcas: limpias, correo });
+    updateTag("asistencia");
+    revalidatePath("/puntajes", "layout");
     return { ok: true, ...resultado };
   } catch (error) {
     console.error("Error al guardar asistencia", error);
@@ -58,4 +61,12 @@ export async function obtenerResumenDirigentes() {
     console.error("Error al calcular el resumen", error);
     return { ok: false, error: "No se pudo cargar el resumen." };
   }
+}
+
+export async function refrescarDatos() {
+  if (!(await correoDirigente())) return { ok: false, error: "No tienes permiso." };
+  updateTag("asistencia");
+  updateTag("puntajes");
+  revalidatePath("/puntajes", "layout");
+  return { ok: true };
 }

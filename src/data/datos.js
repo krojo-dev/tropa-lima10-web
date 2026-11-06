@@ -23,8 +23,26 @@ export const tramites = [
 ];
 
 export const documentos = [
-  { titulo: "Reglamento de la tropa", descripcion: "Normas y organización.", archivo: "/biblioteca/reglamento-tropa.pdf" },
-  { titulo: "Guía para padres de familia", descripcion: "Todo lo que necesitas saber.", archivo: "/biblioteca/guia-padres.pdf" },
+  {
+    titulo: "Reglamento de la tropa",
+    descripcion: "Normas y organización.",
+    archivo: "/biblioteca/reglamento-tropa.pdf",
+  },
+  {
+    titulo: "Guía para padres de familia",
+    descripcion: "Todo lo que necesitas saber.",
+    archivo: "/biblioteca/guia-padres.pdf",
+  },
+  {
+    titulo: "Manual de especialidades rama scout",
+    descripcion: "Descubre tus habilidades aquí.",
+    enlace: "https://scout.org.pe/wp-content/uploads/2018/10/Manual-de-Especialidades-Rama-Scout-2021-1.pdf",
+  },
+  {
+    titulo: "Ejemplo de documento en Drive",
+    descripcion: "Cambia este enlace por uno real.",
+    enlace: "",
+  },
 ];
 
 export function fondoPatrulla(colores) {
@@ -52,3 +70,14 @@ export const roles = [
 export const maxIntegrantesPorPatrulla = 8;
 
 export const estadosAsistencia = ["Asistió", "Tardanza", "Falta", "Falta justificada"];
+
+export const facebookGrupo = "";
+
+export const albumes = [
+  {
+    titulo: "Campamento de ejemplo",
+    descripcion: "Cambia este texto por la descripción del álbum.",
+    portada: "",
+    enlace: "",
+  },
+];

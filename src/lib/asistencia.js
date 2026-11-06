@@ -1,4 +1,4 @@
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { clienteSheets } from "@/lib/google";
 import { listarIntegrantes } from "@/lib/registro";
 import { patrullas } from "@/data/datos";
@@ -121,7 +121,8 @@ export async function guardarMarcas({ fecha, marcas, correo }) {
 
 export async function leerAsistenciaPublica() {
   "use cache";
-  cacheLife({ stale: 30, revalidate: 20, expire: 3600 });
+  cacheLife({ stale: 30, revalidate: 1800, expire: 86400 });
+  cacheTag("asistencia");
 
   try {
     const filas = await leerFilas(clienteSheets());
@@ -134,7 +135,8 @@ export async function leerAsistenciaPublica() {
 
 export async function resumenDirigentesCacheado(hoy) {
   "use cache";
-  cacheLife({ stale: 30, revalidate: 10, expire: 600 });
+  cacheLife({ stale: 30, revalidate: 1800, expire: 86400 });
+  cacheTag("asistencia");
 
   const [filas, integrantes] = await Promise.all([
     leerFilas(clienteSheets()),

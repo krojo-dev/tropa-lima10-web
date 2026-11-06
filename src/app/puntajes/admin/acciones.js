@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { auth, esDirigente } from "@/auth";
 import { patrullas } from "@/data/datos";
 import { categorias } from "@/lib/puntajes";
@@ -65,7 +65,8 @@ export async function registrarPuntajes(datos) {
     return { ok: false, error: "No se pudo guardar. Intenta de nuevo." };
   }
 
-  revalidatePath("/puntajes");
+  updateTag("puntajes");
+  revalidatePath("/puntajes", "layout");
   return { ok: true, total: registro.valores.length };
 }
 
@@ -99,7 +100,8 @@ export async function actualizarRegistro({ lote, ...datos }) {
     return { ok: false, error: "No se pudo editar. Intenta de nuevo." };
   }
 
-  revalidatePath("/puntajes");
+  updateTag("puntajes");
+  revalidatePath("/puntajes", "layout");
   return { ok: true };
 }
 
@@ -116,6 +118,7 @@ export async function eliminarRegistro(lote) {
     return { ok: false, error: "No se pudo eliminar. Intenta de nuevo." };
   }
 
-  revalidatePath("/puntajes");
+  updateTag("puntajes");
+  revalidatePath("/puntajes", "layout");
   return { ok: true };
 }
