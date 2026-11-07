@@ -39,6 +39,21 @@ export const documentos = [
     enlace: "https://scout.org.pe/wp-content/uploads/2018/10/Manual-de-Especialidades-Rama-Scout-2021-1.pdf",
   },
   {
+    titulo: "Bitacora Pista y Senda",
+    descripcion: "Descubre tu camino en la progresión scout.",
+    enlace: "https://scout.org.pe/wp-content/uploads/2018/10/Bitacora_pistas_y_senda.pdf",
+  },
+  {
+    titulo: "Bitacora Rumbo y Travesía",
+    descripcion: "Sigue tu camino por un rumbo y travesía.",
+    enlace: "https://scout.org.pe/wp-content/uploads/2018/10/Bitacora_Rumbo_y_Travesia.pdf",
+  },
+    {
+    titulo: "Insignia Ad altare Dei",
+    descripcion: "Hacía el altar de Dios.",
+    enlace: "https://scout.org.pe/wp-content/uploads/2026/08/Ad-altare-Dei-Rama-Scout.pdf",
+  },
+    {
     titulo: "Ejemplo de documento en Drive",
     descripcion: "Cambia este enlace por uno real.",
     enlace: "",
